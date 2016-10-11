@@ -1,5 +1,6 @@
+import riot from "riotjs";
 
-var asFloor = function(obj, floorLevel, yPosition, errorHandler) {
+export function asFloor(obj, floorLevel, yPosition, errorHandler) {
     var floor = riot.observable(obj);
 
     floor.level = floorLevel;

@@ -1,3 +1,6 @@
+import _ from "lodash";
+import {Movable} from "./movable";
+
 function newElevStateHandler(elevator) { elevator.handleNewState(); }
 
 function Elevator(speedFloorsPerSec, floorCount, floorHeight, maxUsers) {
@@ -255,3 +258,5 @@ Elevator.prototype.handleNewState = function() {
     }
     this.previousTruncFutureFloorIfStopped = futureTruncFloorIfStopped;
 };
+
+export default Elevator;
