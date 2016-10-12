@@ -1,3 +1,6 @@
+import _ from "lodash";
+import riot from "riotjs";
+import $ from "jquery";
 
 function clearAll($elems) {
     _.each($elems, function($elem) {
@@ -137,7 +140,7 @@ function presentWorld($world, world, floorTempl, elevatorTempl, elevatorButtonTe
         var $user = $(riot.render(userTempl, {u: user, state: user.done ? "leaving" : ""}));
         var elem_user = $user.get(0);
 
-        user.on("new_display_state", function() { updateUserState($user, elem_user, user); })
+        user.on("new_display_state", function() { updateUserState($user, elem_user, user); });
         user.on("removed", function() {
             $user.remove();
         });
@@ -163,3 +166,5 @@ function makeDemoFullscreen() {
     $("body .container > *").not(".world").css("visibility", "hidden");
     $("html, body, body .container, .world").css({width: "100%", margin: "0", "padding": 0});
 };
+
+export {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen};

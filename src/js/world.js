@@ -1,7 +1,12 @@
+import _ from "lodash";
+import riot from "riotjs";
 
+import Elevator from "./elevator";
+import User from "./user";
+import {asFloor} from "./floor";
+import {asElevatorInterface} from "./interfaces";
 
-
-var createWorldCreator = function() {
+const createWorldCreator = function() {
     var creator = {};
 
     creator.createFloors = function(floorCount, floorHeight, errorHandler) {
@@ -184,7 +189,7 @@ var createWorldCreator = function() {
                     users.splice(i, 1);
                 }
             }
-            
+
             recalculateStats();
         };
 
@@ -221,7 +226,7 @@ var createWorldCreator = function() {
 };
 
 
-var createWorldController = function(dtMax) {
+const createWorldController = function(dtMax) {
     var controller = riot.observable({});
     controller.timeScale = 1.0;
     controller.isPaused = true;
@@ -283,3 +288,5 @@ var createWorldController = function(dtMax) {
 
     return controller;
 };
+
+export {createWorldCreator, createWorldController};

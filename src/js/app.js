@@ -1,3 +1,10 @@
+import _ from "lodash";
+import riot from "riotjs";
+import $ from "jquery";
+
+import {createWorldCreator, createWorldController} from "./world";
+import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen} from "./presenters";
+import {challenges} from "./challenges";
 
 var createEditor = function() {
     var lsKey = "elevatorCrushCode_v5";
