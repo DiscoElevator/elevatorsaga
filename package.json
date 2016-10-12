@@ -8,10 +8,13 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf build",
+    "clean": "rm -rf build && mkdir build",
     "copy": "cp -r libs/ build && cp -r font-awesome-4.1-1.0/ build && cp -r src/css/ build && cp src/js/base.js build && cp src/index.html build && cp src/documentation.html build",
-    "bundle": "mkdir build && browserify src/js/app.js -o build/app.js -d -t [ babelify --presets [ es2015 ] ]",
-    "build": "npm run clean && npm run bundle && npm run copy"
+    "bundle": "browserify src/js/app.js -t [ babelify --presets [ es2015 ] ] | uglifyjs -cm > build/app.js",
+    "watch": "watchify src/js/app.js -o build/app.js -d -v -t [ babelify --presets [ es2015 ] ]",
+    "static": "static build",
+    "build": "npm run clean && npm run bundle && npm run copy",
+    "dev": "npm run clean && npm run copy && npm run watch"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +26,9 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.16.0",
     "babelify": "^7.3.0",
-    "browserify": "^13.1.0"
+    "browserify": "^13.1.0",
+    "node-static": "^0.7.9",
+    "uglify-js": "^2.7.3",
+    "watchify": "^3.7.0"
   }
 }
