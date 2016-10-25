@@ -5,6 +5,7 @@ import $ from "jquery";
 import {createWorldCreator, createWorldController} from "./world";
 import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen} from "./presenters";
 import {challenges} from "./challenges";
+import {onLogin} from "./login";
 
 var createEditor = function() {
     var lsKey = "elevatorCrushCode_v5";
@@ -255,5 +256,14 @@ $(function() {
         });
         app.worldController.setTimeScale(timeScale);
         app.startChallenge(requestedChallenge, autoStart);
+    });
+
+    $('.modal').css('display', 'block');
+
+    onLogin(token => {
+        if (token) {
+            app.token = token;
+            console.log("token:", app.token);
+        }
     });
 });
