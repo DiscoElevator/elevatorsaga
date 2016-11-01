@@ -2,12 +2,20 @@ import _ from "lodash";
 import $ from "jquery";
 
 const loginHandlers = [];
-var token;
-function onLogin(callback) {
-    if (callback) {
-        loginHandlers.push(callback);
+const loginDialog = {
+    show(){
+        $(".modal").show();
+    },
+    hide(){
+        $(".modal").hide();
+    },
+    onLogin(callback){
+        if (callback) {
+            loginHandlers.push(callback);
+        }
     }
-}
+};
+var token;
 
 $(function () {
     $(".modal button").click(function () {
@@ -18,7 +26,7 @@ $(function () {
             function (data, status) {
                 if (status == "success") {
                     token = data;
-                    $(".modal").css("display", "none");
+                    loginDialog.hide();
                     loginHandlers.forEach(handler => handler(token));
                 }
             })
@@ -43,4 +51,4 @@ $(function () {
     }, 300));
 });
 
-export {onLogin};
+export default loginDialog;
