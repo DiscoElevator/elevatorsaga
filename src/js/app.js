@@ -258,8 +258,10 @@ $(function() {
         app.startChallenge(requestedChallenge, autoStart);
     });
 
-    loginDialog.show();
+    riot.route(window.location.href);
 
+    loginDialog.show();
+    $(".modal-avatar").hide();
     loginDialog.onLogin(token => {
         if (token) {
             app.token = token;
