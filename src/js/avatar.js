@@ -3,7 +3,7 @@ const px = 30;
 const px_s = 15;
 var ctx;
 
-export var ravatar = function (canvas) {
+export var createRandomAvatar = function (canvas) {
     // Canvas supported
     if (canvas.getContext) {
         ctx = canvas.getContext('2d');
@@ -17,6 +17,10 @@ export var ravatar = function (canvas) {
         ctx.fillRect(0, 0, 300, 300);
         ctx.fillRect(300, 0, 300, 300);
         ctx.fillRect(0, 300, 300, 300);
+
+        /*ctx.rect(0, 0, 300, 300);
+         ctx.fillStyle = "white";
+         ctx.fill();*/
 
         face();
         eyes();
