@@ -271,7 +271,6 @@ $(function () {
 
     riot.route(window.location.href);
 
-
     loginDialog.show();
     loginDialog.onLogin(token => {
         if (token) {
