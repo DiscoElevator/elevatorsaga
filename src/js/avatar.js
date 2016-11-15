@@ -3,7 +3,48 @@ const px = 30;
 const px_s = 15;
 var ctx;
 
-export var createRandomAvatar = function (canvas) {
+const avatarWindow = {
+    showModalWindow(){
+        $(".modal-avatar").show();
+        showVideoFromWebcamera();
+    },
+    hideModalWindow(){
+        $(".modal-avatar").hide();
+    },
+    getImageUrl(){
+        return getImageUrlFromVideo();
+    },
+    getImageUrlRandomAvatar(){
+        return createRandomAvatar();
+    }
+};
+
+function showVideoFromWebcamera() {
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
+        || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL
+        || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({video: true}, function (stream) {
+            $(".video").get(0).src = window.URL.createObjectURL(stream);
+            $(".video").get(0).play();
+        }, function () {
+            console.log("problems with video stream!");
+        });
+    }
+}
+
+var getImageUrlFromVideo = function () {
+    var canvas = $(".my-canvas").get(0);
+    var video = $(".video").get(0);
+    var context = canvas.getContext("2d");
+    context.drawImage(video, 80, 0, 480, 480, 0, 0, 300, 300);
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    return canvas.toDataURL("image/jpeg");
+};
+
+export var createRandomAvatar = function () {
+    var canvas = $(".my-canvas").get(0);
     // Canvas supported
     if (canvas.getContext) {
         ctx = canvas.getContext('2d');
@@ -17,10 +58,6 @@ export var createRandomAvatar = function (canvas) {
         ctx.fillRect(0, 0, 300, 300);
         ctx.fillRect(300, 0, 300, 300);
         ctx.fillRect(0, 300, 300, 300);
-
-        /*ctx.rect(0, 0, 300, 300);
-         ctx.fillStyle = "white";
-         ctx.fill();*/
 
         face();
         eyes();
@@ -195,3 +232,5 @@ function randomBetween(max) {
 function randomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
+
+export default avatarWindow;

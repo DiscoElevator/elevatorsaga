@@ -1,6 +1,6 @@
 import _ from "lodash";
 import $ from "jquery";
-import {createRandomAvatar} from "./avatar";
+import avatarWindow from "./avatar";
 
 const loginHandlers = [];
 const loginDialog = {
@@ -16,36 +16,6 @@ const loginDialog = {
         }
     }
 };
-const avatarWindow = {
-    show(){
-        $(".modal-avatar").show();
-    },
-    hide(){
-        $(".modal-avatar").hide();
-    }
-};
-function showVideoFromWebcamera() {
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
-        || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL
-        || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
-    if (navigator.getUserMedia) {
-        navigator.getUserMedia({video: true}, function (stream) {
-            $(".video").get(0).src = window.URL.createObjectURL(stream);
-            $(".video").get(0).play();
-        }, function () {
-            console.log("problems with video stream!");
-        });
-    }
-}
-var getImageUrlFromVideo = function () {
-    var canvas = $(".my-canvas").get(0);
-    var video = $(".video")[0];
-    var context = canvas.getContext("2d");
-    context.drawImage(video, 80, 0, 480, 480, 0, 0, 300, 300);
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    return canvas.toDataURL("image/jpeg");
-};
 var token;
 
 $(function () {
@@ -60,8 +30,6 @@ $(function () {
                     token = data;
                     loginDialog.hide();
                     loginHandlers.forEach(handler => handler(token));
-                    avatarWindow.show();
-                    showVideoFromWebcamera();
                 }
             })
             .fail(function () {
@@ -70,9 +38,9 @@ $(function () {
     });
 
     $(".modal-avatar .btn-ok").click(function () {
-        var base64ImageUrl = getImageUrlFromVideo();
+        var base64ImageUrl = avatarWindow.getImageUrl();
 
-        $(".my-img")[0].src = base64ImageUrl; // print img (for testing now)
+        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
         // for using: "image.src = avatar", where avatar is field from db
 
         $.post("http://localhost:3002/avatar",
@@ -82,17 +50,16 @@ $(function () {
             },
             function (data, status) {
                 if (status == "success") {
-                    $(".modal-avatar").hide();
+                    avatarWindow.hideModalWindow();
                 }
             }
         );
     });
 
     $(".modal-avatar .btn-cancel").click(function () {
-        var canvas = $(".my-canvas").get(0);
-        var base64ImageUrl = createRandomAvatar(canvas);
+        var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
 
-        $(".my-img")[0].src = base64ImageUrl; // print img (for testing now)
+        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
 
         $.post("http://localhost:3002/avatar",
             {
@@ -101,7 +68,7 @@ $(function () {
             },
             function (data, status) {
                 if (status == "success") {
-                    avatarWindow.hide();
+                    avatarWindow.hideModalWindow();
                 }
             }
         );
