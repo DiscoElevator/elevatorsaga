@@ -37,43 +37,6 @@ $(function () {
             });
     });
 
-    $(".modal-avatar .btn-ok").click(function () {
-        var base64ImageUrl = avatarWindow.getImageUrl();
-
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
-        // for using: "image.src = avatar", where avatar is field from db
-
-        $.post("http://localhost:3002/avatar",
-            {
-                name: $(".modal input").val(),
-                img: base64ImageUrl
-            },
-            function (data, status) {
-                if (status == "success") {
-                    avatarWindow.hideModalWindow();
-                }
-            }
-        );
-    });
-
-    $(".modal-avatar .btn-cancel").click(function () {
-        var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
-
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
-
-        $.post("http://localhost:3002/avatar",
-            {
-                name: $(".modal input").val(),
-                img: base64ImageUrl
-            },
-            function (data, status) {
-                if (status == "success") {
-                    avatarWindow.hideModalWindow();
-                }
-            }
-        );
-    });
-
     $(".modal input").on('keyup', _.debounce(function (e) {
         $.post("http://localhost:3002/check",
             {

@@ -1,6 +1,7 @@
 import _ from "lodash";
 import riot from "riotjs";
 import $ from "jquery";
+import io from "socket.io-client";
 
 import {createWorldCreator, createWorldController} from "./world";
 import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen} from "./presenters";
@@ -148,6 +149,7 @@ $(function() {
     var codeStatusTempl = document.getElementById("codestatus-template").innerHTML.trim();
 
     var app = riot.observable({});
+    window.app = app;
     app.worldController = createWorldController(1.0 / 60.0);
     app.worldController.on("usercode_error", function(e) {
         console.log("World raised code error", e);
@@ -193,7 +195,11 @@ $(function() {
                 app.world.challengeEnded = true;
                 app.worldController.setPaused(true);
                 if(challengeStatus) {
+                    console.log(app.gameServerSocket);
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
+                    app.gameServerSocket.emit("challenge_completed", {
+                        token: app.token,
+                        data: Object.assign({}, app.world.getStats())});
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -261,14 +267,26 @@ $(function() {
 
     riot.route(window.location.href);
 
-
     loginDialog.show();
     loginDialog.onLogin(token => {
         if (token) {
             app.token = token;
             console.log("token:", app.token);
+            avatarWindow.onAvatarSelect(connectToGameServer.bind(this, token));
             avatarWindow.showModalWindow();
         }
     });
+
+    function connectToGameServer(token) {
+        let socket = io("http://localhost:8090");
+        app.gameServerSocket = socket;
+        console.log(socket);
+        socket.emit("ready", token);
+        socket.on("user_score", scoreChangeHandler);
+    }
+
+    function scoreChangeHandler(newScore) {
+        console.log(newScore);
+    }
 
 });
