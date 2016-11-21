@@ -1,4 +1,4 @@
-.modal {
+.modal, .modal-avatar {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 5; /* Sit on top */
@@ -11,7 +11,7 @@
     padding-top: 60px;
 }
 
-.modal form {
+.modal form, .modal-avatar form {
     background-color: #fefefe;
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
@@ -34,12 +34,12 @@
     border: 3px solid #c62133 !important;
 }
 
-.modal label {
+.modal label, .modal-avatar label {
     margin: 20px;
     color: #555;
 }
 
-.modal button {
+.modal button, .modal-avatar button {
     height: 30px;
     line-height: 16px;
     font-size: 16px;
@@ -58,7 +58,7 @@
     opacity: 0.6;
 }
 
-.modal div {
+.modal div, .modal-avatar div {
     width: 580px;
     margin: 0 auto;
     padding: 20px 0 20px 0;

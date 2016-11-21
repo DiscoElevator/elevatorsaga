@@ -6,6 +6,7 @@ import {createWorldCreator, createWorldController} from "./world";
 import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen} from "./presenters";
 import {challenges} from "./challenges";
 import loginDialog from "./login";
+import avatarWindow from "./avatar";
 
 var createEditor = function() {
     var lsKey = "elevatorCrushCode_v5";
@@ -258,12 +259,16 @@ $(function() {
         app.startChallenge(requestedChallenge, autoStart);
     });
 
-    loginDialog.show();
+    riot.route(window.location.href);
 
+
+    loginDialog.show();
     loginDialog.onLogin(token => {
         if (token) {
             app.token = token;
             console.log("token:", app.token);
+            avatarWindow.showModalWindow();
         }
     });
+
 });
