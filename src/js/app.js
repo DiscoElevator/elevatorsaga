@@ -149,7 +149,7 @@ $(function() {
     var codeStatusTempl = document.getElementById("codestatus-template").innerHTML.trim();
 
     var app = riot.observable({});
-    window.app = app;
+    window.app = app; // TODO delete
     app.worldController = createWorldController(1.0 / 60.0);
     app.worldController.on("usercode_error", function(e) {
         console.log("World raised code error", e);
@@ -279,12 +279,16 @@ $(function() {
     function connectToGameServer(token) {
         let socket = io("http://localhost:8090");
         app.gameServerSocket = socket;
-        socket.emit("ready", token);
+        console.log(socket);
         socket.on("user_score", scoreChangeHandler);
+        socket.on("scores_changed", console.log);
+        socket.on("connect", () => {
+            socket.emit("user_connected", token);
+        });
+        window.s = socket;
     }
 
     function scoreChangeHandler(newScore) {
-        console.log(newScore);
+        console.log("new score", newScore);
     }
-
 });
