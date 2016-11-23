@@ -198,7 +198,7 @@ $(function() {
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
                     app.gameServerSocket.emit("challenge_completed", {
                         token: app.token,
-                        data: Object.assign({level: app.currentChallengeIndex}, app.world.getStats())});
+                        data: Object.assign({level: app.currentChallengeIndex + 1}, app.world.getStats())});
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -279,13 +279,10 @@ $(function() {
     function connectToGameServer(token) {
         let socket = io("http://localhost:8090");
         app.gameServerSocket = socket;
-        console.log(socket);
         socket.on("user_score", scoreChangeHandler);
-        socket.on("scores_changed", console.log);
         socket.on("connect", () => {
             socket.emit("user_connected", token);
         });
-        window.s = socket;
     }
 
     function scoreChangeHandler(newScore) {
