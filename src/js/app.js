@@ -195,11 +195,10 @@ $(function() {
                 app.world.challengeEnded = true;
                 app.worldController.setPaused(true);
                 if(challengeStatus) {
-                    console.log(app.gameServerSocket);
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
                     app.gameServerSocket.emit("challenge_completed", {
                         token: app.token,
-                        data: Object.assign({}, app.world.getStats())});
+                        data: Object.assign({level: app.currentChallengeIndex}, app.world.getStats())});
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -280,7 +279,6 @@ $(function() {
     function connectToGameServer(token) {
         let socket = io("http://localhost:8090");
         app.gameServerSocket = socket;
-        console.log(socket);
         socket.emit("ready", token);
         socket.on("user_score", scoreChangeHandler);
     }
