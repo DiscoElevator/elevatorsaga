@@ -2,6 +2,7 @@ import _ from "lodash";
 import riot from "riotjs";
 import $ from "jquery";
 import io from "socket.io-client";
+import urlConfig from "../../urlConfig";
 
 import {createWorldCreator, createWorldController} from "./world";
 import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld, presentCodeStatus, makeDemoFullscreen} from "./presenters";
@@ -198,7 +199,7 @@ $(function() {
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
                     app.gameServerSocket.emit("challenge_completed", {
                         token: app.token,
-                        data: Object.assign({level: app.currentChallengeIndex + 1}, app.world.getStats())});
+                        data: Object.assign({level: app.currentChallengeIndex}, app.world.getStats())});
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -277,7 +278,7 @@ $(function() {
     });
 
     function connectToGameServer(token) {
-        let socket = io("http://localhost:8090");
+        let socket = io(urlConfig.gameServerUrl);
         app.gameServerSocket = socket;
         socket.on("user_score", scoreChangeHandler);
         socket.on("connect", () => {
