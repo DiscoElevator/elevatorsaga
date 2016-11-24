@@ -7,6 +7,8 @@ import {clearAll, presentStats, presentChallenge, presentFeedback, presentWorld,
 import {challenges} from "./challenges";
 import loginDialog from "./login";
 import avatarWindow from "./avatar";
+import urlConfig from "../../urlConfig";
+var user = {};
 
 var createEditor = function() {
     var lsKey = "elevatorCrushCode_v5";
@@ -120,9 +122,10 @@ var createEditor = function() {
 
 
 var createParamsUrl = function(current, overrides) {
-    return "#" + _.map(_.merge(current, overrides), function(val, key) {
-        return key + "=" + val;
-    }).join(",");
+    return "#" + user.token;
+    /*+ "/" + _.map(_.merge(current, overrides), function(val, key) {
+            return key + "=" + val;
+    }).join(",")*/
 };
 
 
@@ -194,6 +197,7 @@ $(function() {
                 app.worldController.setPaused(true);
                 if(challengeStatus) {
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
+                    riot.route(window.location.href);
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -229,46 +233,56 @@ $(function() {
     });
     editor.trigger("change");
 
+    function registerUser() {
+        localStorage.clear();
+        loginDialog.show();
+        loginDialog.onLogin(log_token =>
+        {
+            if (log_token) {
+                avatarWindow.showModalWindow();
+                user.token = log_token;
+                user.level = "0";
+            }
+            //if (user.token) {
+            //    window.location.hash = user.token;
+            //}
+        });
+    }
+
     riot.route(function(path) {
-        params = _.reduce(path.split(","), function(result, p) {
-            var match = p.match(/(\w+)=(\w+$)/);
-            if(match) { result[match[1]] = match[2]; } return result;
-        }, {});
         var requestedChallenge = 0;
         var autoStart = false;
         var timeScale = parseFloat(localStorage.getItem(tsKey)) || 2.0;
-        _.each(params, function(val, key) {
-            if(key === "challenge") {
-                requestedChallenge = _.parseInt(val) - 1;
-                if(requestedChallenge < 0 || requestedChallenge >= challenges.length) {
-                    console.log("Invalid challenge index", requestedChallenge);
-                    console.log("Defaulting to first challenge");
-                    requestedChallenge = 0;
-                }
-            } else if(key === "autostart") {
-                autoStart = val === "false" ? false : true;
-            } else if(key === "timescale") {
-                timeScale = parseFloat(val);
-            } else if(key === "devtest") {
-                editor.setDevTestCode();
-            } else if(key === "fullscreen") {
-                makeDemoFullscreen();
-            }
-        });
+        if (window.location.hash) {
+            var url_token = /#([^/]*)/.exec(window.location.hash)[1];
+            $.post(urlConfig.loginServerUrl + "/check_token",
+                {
+                    cur_token: url_token
+                },
+                function (data, status) {
+                    if (status == "success") {
+                        if (data.level) {
+                            user.level = data.level;
+                        }
+                        else {
+                            user.level = 0;
+                        }
+                        user.token = url_token;
+                        requestedChallenge = parseInt(user.level);
+                        app.startChallenge(requestedChallenge, autoStart);
+                    }
+                })
+                .fail(function () {
+                    registerUser();
+                });
+        }
+        else {
+            registerUser();
+        }
         app.worldController.setTimeScale(timeScale);
         app.startChallenge(requestedChallenge, autoStart);
     });
 
     riot.route(window.location.href);
-
-
-    loginDialog.show();
-    loginDialog.onLogin(token => {
-        if (token) {
-            app.token = token;
-            console.log("token:", app.token);
-            avatarWindow.showModalWindow();
-        }
-    });
 
 });
