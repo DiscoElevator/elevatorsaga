@@ -1,7 +1,7 @@
 import _ from "lodash";
 import $ from "jquery";
 import avatarWindow from "./avatar";
-const url_config = require(".././../url_config.json");
+import urlConfig from "../../urlConfig";
 
 const loginHandlers = [];
 const loginDialog = {
@@ -21,7 +21,7 @@ var token;
 
 $(function () {
     $(".modal form").submit(function (e) {
-        $.post(url_config.main_url+"/login",
+        $.post(urlConfig.loginServerUrl+"/login",
             {
                 name: $(".modal input").val()
             },
@@ -41,7 +41,7 @@ $(function () {
 
     $(".modal-avatar .btn-ok").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrl();
-        $.post(url_config.main_url+"/avatar",
+        $.post(urlConfig.loginServerUrl+"/avatar",
             {
                 name: $(".modal input").val(),
                 img: base64ImageUrl
@@ -56,7 +56,7 @@ $(function () {
 
     $(".modal-avatar .btn-cancel").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
-        $.post(url_config.main_url+"/avatar",
+        $.post(urlConfig.loginServerUrl+"/avatar",
             {
                 name: $(".modal input").val(),
                 img: base64ImageUrl
@@ -70,7 +70,7 @@ $(function () {
     });
 
     $(".modal input").on('keyup', _.debounce(function (e) {
-        $.post(url_config.main_url+"/check",
+        $.post(urlConfig.loginServerUrl+"/check",
             {
                 name: $(".modal input").val()
             },
