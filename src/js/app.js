@@ -126,6 +126,7 @@ var createParamsUrl = function(current, overrides) {
         return key + "=" + val;
     }).join(",");
 };
+window.createParamsUrl = createParamsUrl;
 
 
 
@@ -196,10 +197,11 @@ $(function() {
                 app.world.challengeEnded = true;
                 app.worldController.setPaused(true);
                 if(challengeStatus) {
-                    presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
+                    // presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, {challenge: (challengeIndex + 2)}));
+                    presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, {foo: (new Date()).getTime()}));
                     app.gameServerSocket.emit("challenge_completed", {
                         token: app.token,
-                        data: Object.assign({level: app.currentChallengeIndex}, app.world.getStats())});
+                        data: Object.assign({level: app.currentChallengeIndex + 1}, app.world.getStats())});
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -243,6 +245,7 @@ $(function() {
         var requestedChallenge = 0;
         var autoStart = false;
         var timeScale = parseFloat(localStorage.getItem(tsKey)) || 2.0;
+        let token;
         _.each(params, function(val, key) {
             if(key === "challenge") {
                 requestedChallenge = _.parseInt(val) - 1;
@@ -259,19 +262,34 @@ $(function() {
                 editor.setDevTestCode();
             } else if(key === "fullscreen") {
                 makeDemoFullscreen();
+            } else if (key === "token") {
+                token = val;
             }
         });
         app.worldController.setTimeScale(timeScale);
-        app.startChallenge(requestedChallenge, autoStart);
+        if (token) {
+            getUser(token).then(user => {
+                console.log("user", user);
+                if (!user) {
+                    loginDialog.show();
+                    return;
+                }
+                loginDialog.hide();
+                app.token = token;
+                const challengeIndex = user.level - 1;
+                app.startChallenge(challengeIndex || 0);
+            }).catch(console.error);
+        } else {
+            loginDialog.show();
+        }
     });
 
     riot.route(window.location.href);
 
-    loginDialog.show();
     loginDialog.onLogin(token => {
         if (token) {
             app.token = token;
-            console.log("token:", app.token);
+            window.location.hash = createParamsUrl(params, {token});
             avatarWindow.onAvatarSelect(connectToGameServer.bind(this, token));
             avatarWindow.showModalWindow();
         }
@@ -288,5 +306,11 @@ $(function() {
 
     function scoreChangeHandler(newScore) {
         console.log("new score", newScore);
+    }
+
+    function getUser(token) {
+        return new Promise((resolve, reject) => {
+            $.get(`${urlConfig.loginServerUrl}/users/${token}`).done(resolve).fail(reject);
+        });
     }
 });

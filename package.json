@@ -14,7 +14,8 @@
     "watch": "watchify src/js/app.js -o build/app.js -d -v -p [ browserify-livereload --host 127.0.0.1 --port 1337 ] -t [ babelify --presets [ es2015 ] ]",
     "static": "static build",
     "build": "npm run clean && npm run bundle && npm run copy",
-    "dev": "npm run clean && npm run copy && run-p watch static"
+    "dev": "npm run clean && npm run copy && run-p watch static",
+    "prod": "npm run clean && npm run copy && npm run build && npm run static"
   },
   "author": "",
   "license": "ISC",

@@ -30,7 +30,7 @@ $(function () {
     $(".modal-avatar .btn-ok").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrl();
 
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
+        // $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
         // for using: "image.src = avatar", where avatar is field from db
 
         $.post(urlConfig.loginServerUrl + "/avatar",
@@ -50,7 +50,7 @@ $(function () {
     $(".modal-avatar .btn-cancel").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
 
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
+        // $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
 
         $.post(urlConfig.loginServerUrl + "/avatar",
             {
