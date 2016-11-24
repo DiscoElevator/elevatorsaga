@@ -277,12 +277,11 @@ $(function() {
 
         if (token) {
             getUser(token).then(user => {
-                console.log("user", user);
                 if (!user) {
                     loginDialog.show();
                     return;
                 }
-
+                connectToGameServer(token);
                 loginDialog.hide();
                 app.token = token;
                 localStorage.setItem("elevatorUserToken", token);
@@ -294,8 +293,6 @@ $(function() {
         }
     });
 
-    riot.route(window.location.href);
-
     loginDialog.onLogin(token => {
         if (token) {
             app.token = token;
@@ -304,6 +301,8 @@ $(function() {
             avatarWindow.showModalWindow();
         }
     });
+
+    riot.route(window.location.href);
 
     function connectToGameServer(token) {
         let socket = io(urlConfig.gameServerUrl);
