@@ -1,6 +1,6 @@
 import _ from "lodash";
 import $ from "jquery";
-import avatarWindow from "./avatar";
+import urlConfig from "../../urlConfig";
 
 const loginHandlers = [];
 const loginDialog = {
@@ -19,8 +19,8 @@ const loginDialog = {
 var token;
 
 $(function () {
-    $(".modal button").click(function () {
-        $.post("http://localhost:3002/login",
+    $(".modal form").submit(function (e) {
+        $.post(urlConfig.loginServerUrl + "/login",
             {
                 name: $(".modal input").val()
             },
@@ -35,10 +35,12 @@ $(function () {
             .fail(function () {
                 $(".modal input").addClass("error");
             });
+        e.preventDefault();
     });
 
+
     $(".modal input").on('keyup', _.debounce(function (e) {
-        $.post("http://localhost:3002/check",
+        $.post(urlConfig.loginServerUrl + "/check",
             {
                 name: $(".modal input").val()
             },

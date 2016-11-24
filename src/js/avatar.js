@@ -1,4 +1,6 @@
 import $ from "jquery";
+import urlConfig from "../../urlConfig";
+
 const px = 30;
 const px_s = 15;
 var ctx;
@@ -31,7 +33,7 @@ $(function () {
         $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
         // for using: "image.src = avatar", where avatar is field from db
 
-        $.post("http://localhost:3002/avatar",
+        $.post(urlConfig.loginServerUrl + "/avatar",
             {
                 name: $(".modal input").val(), // FIXME implicit dependency on login dialog
                 img: base64ImageUrl
@@ -50,7 +52,7 @@ $(function () {
 
         $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
 
-        $.post("http://localhost:3002/avatar",
+        $.post(urlConfig.loginServerUrl + "/avatar",
             {
                 name: $(".modal input").val(),
                 img: base64ImageUrl
