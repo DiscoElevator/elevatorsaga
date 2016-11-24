@@ -117,6 +117,9 @@ var createEditor = function() {
     $("#button_apply").click(function() {
         returnObj.trigger("apply_code");
     });
+    console.log(reset);
+    returnObj.reset = reset;
+    returnObj.saveCode = saveCode;
     return returnObj;
 };
 
@@ -158,7 +161,7 @@ $(function() {
         editor.trigger("usercode_error", e);
     });
 
-    console.log(app.worldController);
+    console.log(editor.reset);
     app.worldCreator = createWorldCreator();
     app.world = undefined;
 
@@ -267,6 +270,11 @@ $(function() {
             }
         });
         app.worldController.setTimeScale(timeScale);
+        if (token !== localStorage.getItem("elevatorUserToken")) {
+            editor.reset();
+            editor.saveCode();
+        }
+
         if (token) {
             getUser(token).then(user => {
                 console.log("user", user);
@@ -274,8 +282,10 @@ $(function() {
                     loginDialog.show();
                     return;
                 }
+
                 loginDialog.hide();
                 app.token = token;
+                localStorage.setItem("elevatorUserToken", token);
                 const challengeIndex = user.level - 1;
                 app.startChallenge(challengeIndex || 0);
             }).catch(console.error);
