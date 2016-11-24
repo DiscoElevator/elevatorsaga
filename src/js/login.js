@@ -1,6 +1,7 @@
 import _ from "lodash";
 import $ from "jquery";
 import avatarWindow from "./avatar";
+const url_config = require(".././../url_config.json");
 
 const loginHandlers = [];
 const loginDialog = {
@@ -19,8 +20,8 @@ const loginDialog = {
 var token;
 
 $(function () {
-    $(".modal button").click(function () {
-        $.post("http://localhost:3002/login",
+    $(".modal form").submit(function (e) {
+        $.post(url_config.main_url+"/login",
             {
                 name: $(".modal input").val()
             },
@@ -35,15 +36,12 @@ $(function () {
             .fail(function () {
                 $(".modal input").addClass("error");
             });
+        e.preventDefault();
     });
 
     $(".modal-avatar .btn-ok").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrl();
-
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
-        // for using: "image.src = avatar", where avatar is field from db
-
-        $.post("http://localhost:3002/avatar",
+        $.post(url_config.main_url+"/avatar",
             {
                 name: $(".modal input").val(),
                 img: base64ImageUrl
@@ -58,10 +56,7 @@ $(function () {
 
     $(".modal-avatar .btn-cancel").click(function () {
         var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
-
-        $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
-
-        $.post("http://localhost:3002/avatar",
+        $.post(url_config.main_url+"/avatar",
             {
                 name: $(".modal input").val(),
                 img: base64ImageUrl
@@ -75,7 +70,7 @@ $(function () {
     });
 
     $(".modal input").on('keyup', _.debounce(function (e) {
-        $.post("http://localhost:3002/check",
+        $.post(url_config.main_url+"/check",
             {
                 name: $(".modal input").val()
             },
