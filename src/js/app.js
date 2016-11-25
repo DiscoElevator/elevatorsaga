@@ -201,7 +201,11 @@ $(function() {
                     presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, {foo: (new Date()).getTime()}));
                     app.gameServerSocket.emit("challenge_completed", {
                         token: app.token,
-                        data: Object.assign({level: app.currentChallengeIndex + 1}, app.world.getStats())});
+                        data: Object.assign({
+                            level: app.currentChallengeIndex + 1,
+                            condition: challenges[challengeIndex].condition.conditions
+                        }, app.world.getStats())
+                    });
                 } else {
                     presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
                 }
@@ -247,22 +251,7 @@ $(function() {
         var timeScale = parseFloat(localStorage.getItem(tsKey)) || 2.0;
         let token;
         _.each(params, function(val, key) {
-            if(key === "challenge") {
-                requestedChallenge = _.parseInt(val) - 1;
-                if(requestedChallenge < 0 || requestedChallenge >= challenges.length) {
-                    console.log("Invalid challenge index", requestedChallenge);
-                    console.log("Defaulting to first challenge");
-                    requestedChallenge = 0;
-                }
-            } else if(key === "autostart") {
-                autoStart = val === "false" ? false : true;
-            } else if(key === "timescale") {
-                timeScale = parseFloat(val);
-            } else if(key === "devtest") {
-                editor.setDevTestCode();
-            } else if(key === "fullscreen") {
-                makeDemoFullscreen();
-            } else if (key === "token") {
+            if (key === "token") {
                 token = val;
             }
         });

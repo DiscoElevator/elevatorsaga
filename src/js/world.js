@@ -222,7 +222,8 @@ const createWorldCreator = function() {
         world.getStats = function() {
             return {
                 elapsedTime: world.elapsedTime,
-                moves: world.moveCount
+                moves: world.moveCount,
+                waitTime: world.maxWaitTime
             };
         };
 

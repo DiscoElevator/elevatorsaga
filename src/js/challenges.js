@@ -8,6 +8,9 @@ var requireUserCountWithinTime = function(userCount, timeLimit) {
             } else {
                 return null;
             }
+        },
+        conditions: {
+            timeLimit
         }
     };
 };
@@ -21,6 +24,9 @@ var requireUserCountWithMaxWaitTime = function(userCount, maxWaitTime) {
             } else {
                 return null;
             }
+        },
+        conditions: {
+            maxWaitTime
         }
     };
 };
@@ -34,7 +40,11 @@ var requireUserCountWithinTimeWithMaxWaitTime = function(userCount, timeLimit, m
             } else {
                 return null;
             }
-       }
+       },
+        conditions: {
+           timeLimit,
+           maxWaitTime
+        }
     };
 };
 
@@ -47,6 +57,9 @@ var requireUserCountWithinMoves = function(userCount, moveLimit) {
             } else {
                 return null;
             }
+        },
+        conditions: {
+            moveLimit
         }
     };
 };
@@ -82,7 +95,5 @@ export const challenges = [
     ,{options: {floorCount: 21, elevatorCount: 5, spawnRate: 1.9, elevatorCapacities: [10]}, condition: requireUserCountWithinTime(110, 80)}
 
     ,{options: {floorCount: 21, elevatorCount: 8, spawnRate: 1.5, elevatorCapacities: [6,8]}, condition: requireUserCountWithinTimeWithMaxWaitTime(2675, 1800, 45)}
-
-    ,{options: {floorCount: 21, elevatorCount: 8, spawnRate: 1.5, elevatorCapacities: [6,8]}, condition: requireDemo()}
 ];
 /* jshint laxcomma:false */
