@@ -117,7 +117,6 @@ var createEditor = function() {
     $("#button_apply").click(function() {
         returnObj.trigger("apply_code");
     });
-    console.log(reset);
     returnObj.reset = reset;
     returnObj.saveCode = saveCode;
     return returnObj;
@@ -154,14 +153,12 @@ $(function() {
     var codeStatusTempl = document.getElementById("codestatus-template").innerHTML.trim();
 
     var app = riot.observable({});
-    window.app = app; // TODO delete
     app.worldController = createWorldController(1.0 / 60.0);
     app.worldController.on("usercode_error", function(e) {
         console.log("World raised code error", e);
         editor.trigger("usercode_error", e);
     });
 
-    console.log(editor.reset);
     app.worldCreator = createWorldCreator();
     app.world = undefined;
 
@@ -307,14 +304,9 @@ $(function() {
     function connectToGameServer(token) {
         let socket = io(urlConfig.gameServerUrl);
         app.gameServerSocket = socket;
-        socket.on("user_score", scoreChangeHandler);
         socket.on("connect", () => {
             socket.emit("user_connected", token);
         });
-    }
-
-    function scoreChangeHandler(newScore) {
-        console.log("new score", newScore);
     }
 
     function getUser(token) {
