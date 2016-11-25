@@ -219,6 +219,13 @@ const createWorldCreator = function() {
             }
         };
 
+        world.getStats = function() {
+            return {
+                elapsedTime: world.elapsedTime,
+                moves: world.moveCount
+            };
+        };
+
         return world;
     };
 

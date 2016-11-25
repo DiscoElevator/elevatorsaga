@@ -1,23 +1,71 @@
 import $ from "jquery";
+import urlConfig from "../../urlConfig";
+
 const px = 30;
 const px_s = 15;
 var ctx;
 
+let avatarSelectionHandler;
+
 const avatarWindow = {
-    showModalWindow(){
+    showModalWindow() {
         $(".modal-avatar").show();
         showVideoFromWebcamera();
     },
-    hideModalWindow(){
+    hideModalWindow() {
         $(".modal-avatar").hide();
     },
-    getImageUrl(){
+    getImageUrl() {
         return getImageUrlFromVideo();
     },
-    getImageUrlRandomAvatar(){
+    getImageUrlRandomAvatar() {
         return createRandomAvatar();
+    },
+    onAvatarSelect(callback) {
+        avatarSelectionHandler = callback || function() {};
     }
 };
+
+$(function () {
+    $(".modal-avatar .btn-ok").click(function () {
+        var base64ImageUrl = avatarWindow.getImageUrl();
+
+        // $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
+        // for using: "image.src = avatar", where avatar is field from db
+
+        $.post(urlConfig.loginServerUrl + "/avatar",
+            {
+                name: $(".modal input").val(), // FIXME implicit dependency on login dialog
+                img: base64ImageUrl
+            },
+            function (data, status) {
+                if (status == "success") {
+                    avatarWindow.hideModalWindow();
+                    avatarSelectionHandler();
+                }
+            }
+        );
+    });
+
+    $(".modal-avatar .btn-cancel").click(function () {
+        var base64ImageUrl = avatarWindow.getImageUrlRandomAvatar();
+
+        // $(".my-img").get(0).src = base64ImageUrl; // print img (for testing now)
+
+        $.post(urlConfig.loginServerUrl + "/avatar",
+            {
+                name: $(".modal input").val(),
+                img: base64ImageUrl
+            },
+            function (data, status) {
+                if (status == "success") {
+                    avatarWindow.hideModalWindow();
+                    avatarSelectionHandler();
+                }
+            }
+        );
+    })
+});
 
 function showVideoFromWebcamera() {
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
@@ -34,16 +82,16 @@ function showVideoFromWebcamera() {
     }
 }
 
-var getImageUrlFromVideo = function () {
+function getImageUrlFromVideo() {
     var canvas = $(".my-canvas").get(0);
     var video = $(".video").get(0);
     var context = canvas.getContext("2d");
     context.drawImage(video, 80, 0, 480, 480, 0, 0, 300, 300);
     context.setTransform(1, 0, 0, 1, 0, 0);
     return canvas.toDataURL("image/jpeg");
-};
+}
 
-export var createRandomAvatar = function () {
+export function createRandomAvatar () {
     var canvas = $(".my-canvas").get(0);
     // Canvas supported
     if (canvas.getContext) {
